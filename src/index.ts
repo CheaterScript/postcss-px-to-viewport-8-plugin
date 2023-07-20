@@ -48,6 +48,22 @@ const postcssPxToViewport = (options: OptionType) => {
       css.walkRules((rule: RuleType) => {
         // Add exclude option to ignore some files like 'node_modules'
         const file = rule.source?.input.file || '';
+
+        if (opts.include && file) {
+          if (Object.prototype.toString.call(opts.include) === '[object RegExp]') {
+            if (!opts.include.test(file)) return;
+          } else if (Object.prototype.toString.call(opts.include) === '[object Array]') {
+            var flag = false;
+            for (var i = 0; i < opts.include.length; i++) {
+              if (opts.include[i].test(file)) {
+                flag = true;
+                break;
+              }
+            }
+            if (!flag) return;
+          }
+        }
+        
         if (opts.exclude && file) {
           if (Object.prototype.toString.call(opts.exclude) === '[object RegExp]') {
             if (isExclude(opts.exclude as RegExp, file)) return;
